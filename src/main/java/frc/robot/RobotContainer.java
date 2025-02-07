@@ -5,7 +5,12 @@
 package frc.robot;
 import com.studica.frc.AHRS;
 
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.ADXL345_I2C.Axes;
+import edu.wpi.first.wpilibj.PS4Controller.Axis;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -20,6 +25,7 @@ import frc.robot.commands.R2Jesu_ShooterCommand;
 import frc.robot.subsystems.R2Jesu_DriveSubsystem;
 import frc.robot.subsystems.R2Jesu_HangerSubsystem;
 import frc.robot.subsystems.R2Jesu_ShooterSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  
 
 /**
@@ -35,10 +41,24 @@ public class RobotContainer {
   private final R2Jesu_DriveSubsystem m_R2Jesu_DriveSubsystem = new R2Jesu_DriveSubsystem(ahrs);
   private final R2Jesu_ShooterSubsystem m_R2Jesu_ShooterSubsystem = new R2Jesu_ShooterSubsystem(robotLimelight);
   private final R2Jesu_HangerSubsystem m_R2Jesu_HangerSubsystem = new R2Jesu_HangerSubsystem();
+  
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController m_driverController =
       new XboxController(OperatorConstants.kDriverControllerPort);
+
+  private final GenericHID buttonBoard =
+      new GenericHID(2);
+      //Joystick adjStick = new Joystick(2);
+      JoystickButton button1 = new JoystickButton(buttonBoard, 1);
+      JoystickButton button2 = new JoystickButton(buttonBoard, 2);
+      JoystickButton button3 = new JoystickButton(buttonBoard, 3);
+      JoystickButton button4 = new JoystickButton(buttonBoard, 4);
+      JoystickButton button5 = new JoystickButton(buttonBoard, 5);
+      JoystickButton button6 = new JoystickButton(buttonBoard, 6);
+      JoystickButton button7 = new JoystickButton(buttonBoard, 7);
+
+  private Trigger adjStick1 = new Trigger(buttonBoard.axisGreaterThan(1,.5, null));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -50,7 +70,7 @@ public class RobotContainer {
         () -> m_driverController.getRightX(),
         () ->  m_driverController.getRightY(),
         () -> -m_driverController.getLeftX()));
-    
+     
     m_R2Jesu_ShooterSubsystem.setDefaultCommand(
      new R2Jesu_ShooterCommand(m_R2Jesu_ShooterSubsystem)); 
      
@@ -68,10 +88,16 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Schedule `R2Jesu_DriveCommand` when `R2Jesu_DriveCondition` changes to `true`
-    new JoystickButton(m_driverController, XboxController.Button.kA.value).whileTrue(new R2Jesu_LightShotCommand(m_R2Jesu_ShooterSubsystem));
-    new JoystickButton(m_driverController, XboxController.Button.kB.value).whileTrue(new R2Jesu_ShootCommand(m_R2Jesu_ShooterSubsystem));
+    // new JoystickButton(m_driverController, XboxController.Button.kA.value).whileTrue(new R2Jesu_LightShotCommand(m_R2Jesu_ShooterSubsystem));
+    button1.whileTrue(new R2Jesu_LightShotCommand(m_R2Jesu_ShooterSubsystem));
+    button2.whileTrue(new R2Jesu_ShootCommand(m_R2Jesu_ShooterSubsystem));
+    adjStick1.onTrue(new R2Jesu_LightShotCommand(m_R2Jesu_ShooterSubsystem));
+    //button3.whileTrue(new R2Jesu_HangerSubsystem.R2Jesu_PrintCommand("hello"));
+
+    //new JoystickButton(m_driverController, XboxController.Button.kB.value).whileTrue(new R2Jesu_ShootCommand(m_R2Jesu_ShooterSubsystem));
     new JoystickButton(m_driverController, XboxController.Button.kX.value).whileTrue(new R2Jesu_ReverseIntakeCommand(m_R2Jesu_ShooterSubsystem));
-    new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value).whileTrue(new R2Jesu_ForwardHangCommand(m_R2Jesu_HangerSubsystem));
+    //new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value).whileTrue(new R2Jesu_ForwardHangCommand(m_R2Jesu_HangerSubsystem));
+
 
     // Schedule `R2Jesu_DriveMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.

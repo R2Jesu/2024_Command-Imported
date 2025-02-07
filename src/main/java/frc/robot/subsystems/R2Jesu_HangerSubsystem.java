@@ -33,6 +33,13 @@ public class R2Jesu_HangerSubsystem extends SubsystemBase {
         });
   }
 
+  public Command R2Jesu_PrintCommand(String whatever) {
+    return runOnce(
+        () -> {
+          System.out.println(whatever);
+        });
+  }
+
   /**
    * An R2Jesu_Shooter method querying a boolean state of the subsystem (for R2Jesu_Shooter, a digital sensor).
    *
